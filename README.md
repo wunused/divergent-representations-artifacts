@@ -46,9 +46,8 @@ vulnerable function (`sqlite3_str_vappendf`). The unoptimized build of
 proof-of-concept exploit crashes as soon as the overwrite occurs.
 
 ```
-$ docker build -t cve-2022-35737 publications/disclosures/cve-2022-35737/`
-$ docker run --rm -it cve-2022-35737 /bin/bash`
-
+$ docker build -t cve-2022-35737 publications/disclosures/cve-2022-35737/
+$ docker run --rm -it cve-2022-35737 /bin/bash
 ```
 
 #### Evaluation
