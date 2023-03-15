@@ -14,7 +14,7 @@ downloaded and initialized (example shown for Debian-based Linux systems):
 
 ```
 sudo apt update && sudo apt install -y git
-git clone TODO
+git clone --recurse-submodules git@github.com:wunused/divergent-representations-artifacts.git
 ```
 
 ### Artifact 1: Exploit CVE-2022-35737 using Divergent Representation
