@@ -6,7 +6,6 @@
 * Docker (Artifact 1 & 3)
 * VSCode (Artifact 2)
 * Binary Ninja (Artifact 3)
-* Python3 (Artifact 3 - Optional)
 
 ### Getting Started
 
@@ -240,7 +239,8 @@ Ninja plugins location for your system. For example, if using a Linux system:
 $ cp -r divergent-representations/binja-scripts ~/.binaryninja/plugins/divergent-reps
 ```
 
-(Optional - if you want to reproduce builds of scanned software from scratch)
+Next steps are optional - proceed if you want to reproduce builds of scanned
+software from scratch. If not, skip to Evaluation.
 
 Build Docker image of the base build environment used by all other build
 containers (approximately 1-5 minutes):
