@@ -6,6 +6,7 @@
 * Docker (Artifact 1 & 3)
 * VSCode (Artifact 2)
 * Binary Ninja (Artifact 3)
+* Python3 (Artifact 3 - Optional)
 
 ### Getting Started
 
@@ -33,10 +34,10 @@ Install Docker (example shown for Debian-based Linux systems):
 sudo apt update && sudo apt install -y docker.io
 ```
 
-Build and run the Docker container shown in the snippet below (approximately 5
-minutes to build). The container contains exploit proof-of-concept
-(`/poc/snprintf-control-pc`) and two builds of the vulnerable SQLite library
-(`/sqlite3/build-optimized/.libs/libsqlite3.so` and
+Build Docker image and run the container shown in the snippet below
+(approximately 5 minutes to build). The container contains exploit
+proof-of-concept (`/poc/snprintf-control-pc`) and two builds of the vulnerable
+SQLite library (`/sqlite3/build-optimized/.libs/libsqlite3.so` and
 `/sqlite3/build-unoptimized/.libs/libsqlite3.so`).
 
 The optimized build of `libsqlite3.so` contains a divergent representation that
@@ -211,15 +212,80 @@ Our full results can be viewed at https://pastebin.com/QxCRXAp8, which are
 produced by adding the results of `divergentrepsfor.ql` and
 `divergentrepswhile.ql`. Note that CodeQL Multi-Repository Variant Analysis
 only scans the code as it exists at the time of the query, so results may
-differ when queries are run days apart.
+differ slightly from ours as repositories have changed.
 
 ### Artifact 3: Identify divergent representation patterns in compiled binaries
 
 We provide a Binary Ninja plugin that identifies compiled binary code that may
-be a divergent representation, and Docker containers to reproduce our build of
-software that we scanned for divergent representations.
+be a divergent representation, and Docker containers to reproduce our builds of
+the software that we scanned. For each software project that we scanned, we
+built multiple versions of the project: one for each optimization level (O0 -
+O3) and each compiler used (GCC and Clang) for six total builds of each
+project. We also provide pre-compiled binaries, in the event that you do not
+wish to reproduce our builds from scratch.
 
 #### Setup
 
+Install and license Binary Ninja (note that Binary Ninja is proprietary
+software): https://docs.binary.ninja/getting-started.html, https://binary.ninja/purchase/
+
+If using a commercial Binary Ninja license: ensure that Python3 is installed on
+your system. No further Binary Ninja setup required.
+
+If using a personal Binary Ninja license: copy the contents of the
+`divergent-representations/binja-scripts/` directory to the appropriate Binary
+Ninja plugins location for your system. For example, if using a Linux system:
+
+```
+$ cp -r divergent-representations/binja-scripts ~/.binaryninja/plugins/divergent-reps
+```
+
+(Optional - if you want to reproduce builds of scanned software from scratch)
+
+Build Docker image of the base build environment used by all other build
+containers (approximately 1-5 minutes):
+
+```
+$ docker build -t build-environment -f builds/build-environment.dockerfile builds/
+```
+
+For each subdirectory in the `builds` directory, build the Docker image from
+the associated Dockerfile (approximately 30 minutes to build, each). For
+example, to build the SQLite image:
+
+```
+$ docker build -t sqlite-build -f builds/sqlite/sqlite-build.dockerfile builds/sqlite/
+```
+
+This creates a Docker image with six builds of SQLite each compiled at a
+different optimization level for each compiler. All build artifacts are
+located in the `/artifacts` directory of the container image.
+
 #### Evaluation
 
+If using commercial Binary Ninja license:
+
+For each software artifact, execute the provided Binary Ninja script from the
+command line, and pass as argument the path to the compiled binary artifact
+For example, to scan the SQLite artifacts for Divergent
+Representations from the command line (approximately 1 minute per project):
+
+```
+$ python3 divergent-representations/binja-scripts/fdr.py builds/sqlite/artifacts/libsqlite3.so.gcc-O3
+<snip>
+sqlite3Pragma@0xf1b70: rax_268#332 = ϕ(rax_268#331, rax_268#333)
+sqlite3CreateIndex@0x103b08: rax_83#175 = ϕ(rax_83#174, rax_83#176)
+found 51 divergent representations in builds/sqlite/artifacts/libsqlite3.so.0.8.6.gcc-O3
+```
+
+Warnings about function complexity may be ignored.
+
+If using personal Binary Ninja license:
+
+For each software artifact, open the compiled binary in Binary Ninja. Wait for
+Binary Ninja to analyze the program. Right click in the center window and
+select "Plugins -> Binja Div Reps -> Find in all functions". Plugin results
+will be printed in the Log console.
+
+Numbers of identified divergent representations should match Table 1 of
+submission.
