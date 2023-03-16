@@ -233,7 +233,9 @@ your system. No further Binary Ninja setup required.
 
 If using a personal Binary Ninja license: copy the contents of the
 `divergent-representations/binja-scripts/` directory to the appropriate Binary
-Ninja plugins location for your system. For example, if using a Linux system:
+Ninja plugins location for your system
+(https://docs.binary.ninja/guide/plugins.html). For example, if using a Linux
+system:
 
 ```
 $ cp -r divergent-representations/binja-scripts ~/.binaryninja/plugins/divergent-reps
