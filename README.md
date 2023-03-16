@@ -14,8 +14,8 @@ Install git and clone this repository, ensuring that all submodules are
 downloaded and initialized (example shown for Debian-based Linux systems):
 
 ```
-sudo apt update && sudo apt install -y git
-git clone --recurse-submodules git@github.com:wunused/divergent-representations-artifacts.git
+$ sudo apt update && sudo apt install -y git
+$ git clone --recurse-submodules git@github.com:wunused/divergent-representations-artifacts.git
 ```
 
 ### Artifact 1: Exploit CVE-2022-35737 using Divergent Representation
@@ -31,7 +31,7 @@ representation.
 Install Docker (example shown for Debian-based Linux systems):
 
 ```
-sudo apt update && sudo apt install -y docker.io
+$ sudo apt update && sudo apt install -y docker.io
 ```
 
 Build Docker image and run the container shown in the snippet below
