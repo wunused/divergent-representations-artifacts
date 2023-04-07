@@ -42,7 +42,7 @@ ENV CC=clang-14 CFLAGS="-O3"
 RUN ../src/configure --enable-shared && make
 
 WORKDIR /artifacts
-RUN mv /sqlite/build-gcc-00/.libs/libsqlite3.so.0.8.6 \
+RUN mv /sqlite/build-gcc-O0/.libs/libsqlite3.so.0.8.6 \
         ./libsqlite3.so.0.8.6.gcc-O0 && \
     mv /sqlite/build-gcc-O1/.libs/libsqlite3.so.0.8.6 \
         ./libsqlite3.so.0.8.6.gcc-O1 && \
@@ -58,13 +58,13 @@ RUN mv /sqlite/build-gcc-00/.libs/libsqlite3.so.0.8.6 \
         ./libsqlite3.so.0.8.6.clang-O2 && \
     mv /sqlite/build-clang-O3/.libs/libsqlite3.so.0.8.6 \
         ./libsqlite3.so.0.8.6.clang-O3 && \
-    mv /sqlite/build-gcc-00/sqlite3 ./sqlite3.gcc-O0 && \
-    mv /sqlite/build-gcc-01/sqlite3 ./sqlite3.gcc-O1 && \
-    mv /sqlite/build-gcc-02/sqlite3 ./sqlite3.gcc-O2 && \
-    mv /sqlite/build-gcc-03/sqlite3 ./sqlite3.gcc-O3 && \
-    mv /sqlite/build-clang-00/sqlite3 ./sqlite3.clang-O0 && \
-    mv /sqlite/build-clang-01/sqlite3 ./sqlite3.clang-O1 && \
-    mv /sqlite/build-clang-02/sqlite3 ./sqlite3.clang-O2 && \
-    mv /sqlite/build-clang-03/sqlite3 ./sqlite3.clang-O3
+    mv /sqlite/build-gcc-O0/sqlite3 ./sqlite3.gcc-O0 && \
+    mv /sqlite/build-gcc-O1/sqlite3 ./sqlite3.gcc-O1 && \
+    mv /sqlite/build-gcc-O2/sqlite3 ./sqlite3.gcc-O2 && \
+    mv /sqlite/build-gcc-O3/sqlite3 ./sqlite3.gcc-O3 && \
+    mv /sqlite/build-clang-O0/sqlite3 ./sqlite3.clang-O0 && \
+    mv /sqlite/build-clang-O1/sqlite3 ./sqlite3.clang-O1 && \
+    mv /sqlite/build-clang-O2/sqlite3 ./sqlite3.clang-O2 && \
+    mv /sqlite/build-clang-O3/sqlite3 ./sqlite3.clang-O3
 
 CMD ["/bin/bash"]
