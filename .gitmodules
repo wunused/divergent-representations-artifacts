@@ -1,7 +1,7 @@
 [submodule "publications"]
 	path = publications
-	url = https://github.com/trailofbits/publications
+	url = ../../trailofbits/publications.git
 [submodule "divergent-representations"]
     path = divergent-representations
     branch = main
-	url = https://github.com/trailofbits/divergent-representations
+    url = ../../trailofbits/divergent-representations.git
