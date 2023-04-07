@@ -10,7 +10,7 @@
 ### Getting Started
 
 Install git and clone this repository, ensuring that all submodules are
-downloaded and initialized (example shown for Debian-based Linux systems):
+downloaded and initialized (examples are shown for Debian-based Linux systems):
 
 ```
 $ sudo apt update && sudo apt install -y git
@@ -19,24 +19,32 @@ $ git clone --recurse-submodules git@github.com:wunused/divergent-representation
 
 ### Artifact 1: Exploit CVE-2022-35737 using Divergent Representation
 
-We provide a proof-of-concept exploit for SQLite CVE-2022-35737 and show that
-it sets the saved return address of the vulnerable function only when the
-vulnerable program contains a divergent representation. This supports our claim
-that SQLite CVE-2022-35737 is enabled by a compiler-inserted divergent
-representation.
+We provide a proof-of-concept exploit for SQLite CVE-2022-35737. The exploit
+successfully sets the saved return address of the vulnerable function only when
+the vulnerable program contains a divergent representation.
+
+This supports our claim that SQLite CVE-2022-35737 is enabled by a
+compiler-inserted divergent representation.
 
 #### Setup
 
-Install Docker (example shown for Debian-based Linux systems):
+Install Docker:
 
 ```
 $ sudo apt update && sudo apt install -y docker.io
 ```
 
 Build Docker image and run the container shown in the snippet below
-(approximately 5 minutes to build). The container contains exploit
-proof-of-concept (`/poc/snprintf-control-pc`) and two builds of the vulnerable
-SQLite library (`/sqlite3/build-optimized/.libs/libsqlite3.so` and
+(approximately 5 minutes to build).
+
+```
+$ docker build -t cve-2022-35737 publications/disclosures/CVE-2022-35737/
+$ docker run --rm -it cve-2022-35737 /bin/bash
+```
+
+The container contains exploit proof-of-concept (`/poc/snprintf-control-pc`)
+and two builds of the vulnerable SQLite library
+(`/sqlite3/build-optimized/.libs/libsqlite3.so` and
 `/sqlite3/build-unoptimized/.libs/libsqlite3.so`).
 
 The optimized build of `libsqlite3.so` contains a divergent representation that
@@ -45,30 +53,22 @@ vulnerable function (`sqlite3_str_vappendf`). The unoptimized build of
 `libsqlite3.so` does not contain the divergent representation, so the
 proof-of-concept exploit crashes as soon as the overwrite occurs.
 
-```
-$ docker build -t cve-2022-35737 publications/disclosures/CVE-2022-35737/
-$ docker run --rm -it cve-2022-35737 /bin/bash
-```
 
 #### Evaluation
 
-Execute the exploit program by pre-loading the vulnerable library built WITHOUT
-optimizations. The program will crash with a memory segmentation fault because
-the stack buffer overflow writes 1GB of data to the program's 8MB stack,
-resulting in an immediate crash:
-
+Execute the exploit program by preloading the vulnerable library built without
+optimizations:
 ```
 # LD_PRELOAD=/sqlite3/build-unoptimized/.libs/libsqlite3.so /poc/snprintf-control-pc
 Segmentation fault (core dumped)
 ```
 
-Execute the exploit program by pre-loading the vulnerable library built WITH
-optimizations. The program will crash with a stack smashing warning. The
-divergent representation in the optimized build allows the exploit to overwrite
-the saved return address (and stack canary) with attacker controlled values,
-and then to reach the function return where the stack canary is checked (rather
-than immediately crashing, as when the exploit is run against the unoptimized
-build):
+The program crashes with a memory segmentation fault because the stack
+buffer overflow writes 1GB of data to the program's 8MB stack, resulting in an
+immediate crash.
+
+Next, execute the exploit program by preloading the vulnerable library built
+with optimizations:
 
 ```
 # LD_PRELOAD=/sqlite3/build-optimized/.libs/libsqlite3.so /poc/snprintf-control-pc
@@ -76,7 +76,15 @@ build):
 Aborted (core dumped)
 ```
 
-If desired, one can further confirm our result by using a debugger to set a
+The program crashes with a stack smashing warning.
+
+The divergent representation in the optimized build allows the exploit to
+overwrite the saved return address (and stack canary) with attacker controlled
+values, and then to reach the function return where the stack canary is checked
+(rather than immediately crashing, as when the exploit is run against the
+unoptimized build).
+
+If desired, you can further confirm our result by using a debugger to set a
 breakpoint in the vulnerable function (`sqlite3_str_vappendf`) at the function
 return location (but before the stack canary is checked) and observing that,
 when the breakpoint is hit in the optimized build, the saved return address has
@@ -150,7 +158,7 @@ Program received signal SIGSEGV, Segmentation fault.
 (gdb) quit
 ```
 
-Source code for the exploit can be viewed in this repository at
+The source code for the exploit can be viewed in this repository at
 `publications/disclosures/CVE-2022-35737/snprintf-control-pc.c` or in the
 container at `/poc/snprintf-control-pc.c`.
 
