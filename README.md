@@ -46,7 +46,7 @@ vulnerable function (`sqlite3_str_vappendf`). The unoptimized build of
 proof-of-concept exploit crashes as soon as the overwrite occurs.
 
 ```
-$ docker build -t cve-2022-35737 publications/disclosures/cve-2022-35737/
+$ docker build -t cve-2022-35737 publications/disclosures/CVE-2022-35737/
 $ docker run --rm -it cve-2022-35737 /bin/bash
 ```
 
@@ -83,7 +83,7 @@ when the breakpoint is hit in the optimized build, the saved return address has
 been set to the attacker controlled value `0xdeadbeefdeadbeef`.
 
 (Note that the breakpoint address may be different in each build of the
-vulnerable library - the specific breakpoint address can be determinied by
+vulnerable library - the specific breakpoint address can be determined by
 first setting a breakpoint on the `sqlite3_str_vappendf` function and
 disassembling it to determine the function return address.)
 
@@ -219,7 +219,7 @@ We provide a Binary Ninja plugin that identifies compiled binary code that may
 be a divergent representation, and Docker containers to reproduce our builds of
 the software that we scanned. For each software project that we scanned, we
 built multiple versions of the project: one for each optimization level (O0 -
-O3) and each compiler used (GCC and Clang) for six total builds of each
+O3) and each compiler used (GCC and Clang) for eight total builds of each
 project. We also provide pre-compiled binaries, in the event that you do not
 wish to reproduce our builds from scratch.
 
@@ -259,7 +259,7 @@ example, to build the SQLite image:
 $ docker build -t sqlite-build -f builds/sqlite/sqlite-build.dockerfile builds/sqlite/
 ```
 
-This creates a Docker image with six builds of SQLite each compiled at a
+This creates a Docker image with eight builds of SQLite each compiled at a
 different optimization level for each compiler. All build artifacts are
 located in the `/artifacts` directory of the container image.
 
